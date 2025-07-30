@@ -1,181 +1,91 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ataul  - Создание современных сайтов</title>
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/animations.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>ВЗЛОМ СИСТЕМЫ...</title>
+    <style>
+        body {
+            background: black;
+            color: lime;
+            font-family: monospace;
+            overflow: hidden;
+            margin: 0;
+            padding: 20px;
+        }
+        #matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            opacity: 0.1;
+            z-index: -1;
+        }
+        #hack-text {
+            white-space: pre;
+            line-height: 1.2;
+        }
+        .blink {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+    </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <a href="index.html" class="logo">
-                <img src="images/logo.svg" alt="Ataul " width="70">
-            </a>
-            <nav class="nav">
-                <ul class="nav-list">
-                    <li><a href="index.html" class="active">Главная</a></li>
-                    <li><a href="about.html">О нас</a></li>
-                    <li><a href="services.html">Услуги</a></li>
-                    <li><a href="portfolio.html">Портфолио</a></li>
-                    <li><a href="contacts.html">Контакты</a></li>
-                </ul>
-                <div class="burger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </nav>
-            <a href="contacts.html" class="btn btn-outline">Обсудить проект</a>
-        </div>
-    </header>
+    <canvas id="matrix"></canvas>
+    <div id="hack-text"></div>
 
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1 class="hero-title">Создаём сайты, которые работают на ваш бизнес</h1>
-                <p class="hero-text">От идеи до реализации - полный цикл разработки современных веб-решений</p>
-                <div class="hero-buttons">
-                    <a href="services.html" class="btn btn-primary">Наши услуги</a>
-                    <a href="portfolio.html" class="btn btn-outline">Примеры работ</a>
-                </div>
-            </div>
-            <div class="hero-image">
-                <img src="images/hero-illustration.jpg" alt="Веб-разработка" class="scale-in">
-            </div>
-        </div>
-    </section>
+    <script>
+        // Эффект "Матрицы" на фоне
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const chars = "01";
+        const fontSize = 14;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(0);
 
-    <section class="features">
-        <div class="container">
-            <h2 class="section-title">Почему выбирают нас</h2>
-            <div class="features-grid">
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <img src="images/icons/design.svg" alt="Дизайн">
-                    </div>
-                    <h3>Уникальный дизайн</h3>
-                    <p>Каждый проект - индивидуальное решение, отражающее ваш бренд</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <img src="images/icons/responsive.svg" alt="Адаптивность">
-                    </div>
-                    <h3>Адаптивность</h3>
-                    <p>Идеальное отображение на всех устройствах и браузерах</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <img src="images/icons/seo.svg" alt="SEO">
-                    </div>
-                    <h3>SEO-оптимизация</h3>
-                    <p>Заложим основы продвижения еще на этапе разработки</p>
-                </div>
-                <div class="feature-card fade-in">
-                    <div class="feature-icon">
-                        <img src="images/icons/support.svg" alt="Поддержка">
-                    </div>
-                    <h3>Техническая поддержка</h3>
-                    <p>Гарантийное и постгарантийное обслуживание</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px monospace';
 
-    <section class="portfolio-preview">
-        <div class="container">
-            <h2 class="section-title">Наши работы</h2>
-            <div class="portfolio-grid">
-                <a href="https://barnaul.grilnica.ru/" class="portfolio-item slide-up">
-                    <img src="images/portfolio/1.svg" alt="Проект 1">
-                    <div class="portfolio-overlay">
-                        <h3>Корпоративный сайт</h3>
-                        <p>Для сети ресторанов</p>
-                    </div>
-                </a>
-                <a href="https://orange-clinic.ru/" class="portfolio-item slide-up">
-                    <img src="images/portfolio/2.svg" alt="Проект 2">
-                    <div class="portfolio-overlay">
-                        <h3>Корпоративный сайт</h3>
-                        <p>Для медицинского центра</p>
-                    </div>
-                </a>
-                <a href="portfolio-item3.html" class="portfolio-item slide-up">
-                    <img src="images/portfolio/3.svg" alt="Проект 3">
-                    <div class="portfolio-overlay">
-                        <h3>Лендинг для стартапа</h3>
-                        <p>Презентация продукта</p>
-                    </div>
-                </a>
-            </div>
-            <div class="text-center">
-                <a href="portfolio.html" class="btn btn-outline">Смотреть все работы</a>
-            </div>
-        </div>
-    </section>
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
 
-    <section class="cta">
-        <div class="container">
-            <div class="cta-content">
-                <h2>Готовы обсудить ваш проект?</h2>
-                <p>Оставьте заявку и мы свяжемся с вами в течение дня</p>
-                <a href="contacts.html" class="btn btn-primary">Оставить заявку</a>
-            </div>
-        </div>
-    </section>
+        // Текст "взлома"
+        const hackText = document.getElementById('hack-text');
+        const messages = [
+            "> Подключаемся к системе...",
+            "> Обход защиты... УСПЕШНО",
+            "> Доступ к камере: АКТИВИРОВАН",
+            "> Перехват паролей... 23%... 67%... 100%",
+            "> ВЗЛОМ ЗАВЕРШЕН!",
+            " ",
+            "ТВОЙ КОМПЬЮТЕР ВЗЛОМАН!",
+            "ХА-ХА-ХА! ЭТО РОЗЫГРЫШ! 😆"
+        ];
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-grid">
-                <div class="footer-col">
-                    <a href="index.html" class="footer-logo">
-                        <img src="images/logo-white.svg" alt="Ataul " width="180">
-                    </a>
-                    <p>Создаем современные и эффективные веб-решения с 2023 года</p>
-                </div>
-                <div class="footer-col">
-                    <h3>Навигация</h3>
-                    <ul>
-                        <li><a href="index.html">Главная</a></li>
-                        <li><a href="about.html">О нас</a></li>
-                        <li><a href="services.html">Услуги</a></li>
-                        <li><a href="portfolio.html">Портфолио</a></li>
-                        <li><a href="contacts.html">Контакты</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h3>Услуги</h3>
-                    <ul>
-                        <li><a href="services.html#webdev">Веб-разработка</a></li>
-                        <li><a href="services.html#design">Дизайн</a></li>
-                        <li><a href="services.html#seo">SEO-оптимизация</a></li>
-                        <li><a href="services.html#support">Поддержка</a></li>
-                    </ul>
-                </div>
-                <div class="footer-col">
-                    <h3>Контакты</h3>
-                    <ul class="footer-contacts">
-                        <li><a href="tel:+78001234567">+7 (929) 009-66-46</a></li>
-                        <li><a href="mailto:info@ataul.ru">info@ataul.ru</a></li>
-                    </ul>
-                    <div class="social-links">
-                        <a href="#"><img src="images/icons/telegram.svg" alt="Telegram"></a>
-                        <a href="#"><img src="images/icons/whatsapp.svg" alt="WhatsApp"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>© 2025 Ataul . Все права защищены</p>
-                <a href="#">Политика конфиденциальности</a>
-            </div>
-        </div>
-    </footer>
-
-    <script src="js/main.js"></script>
-    <script src="js/animations.js"></script>
+        let i = 0;
+        function typeWriter() {
+            if (i < messages.length) {
+                hackText.innerHTML += messages[i] + "<br>";
+                i++;
+                setTimeout(typeWriter, 1500);
+            } else {
+                hackText.innerHTML += "<span class='blink'>Нажми F5 для перезагрузки</span>";
+            }
+        }
+        setTimeout(typeWriter, 1000);
+    </script>
 </body>
 </html>
